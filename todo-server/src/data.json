@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Complete homework assignment",
+    "description": "Finish the math problems and submit the assignment online.",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "title": "Buy groceries",
+    "description": "Get milk, eggs, bread, and fruits for the week.",
+    "completed": false
+  },
+  {
+    "id": 3,
+    "title": "Call mom",
+    "description": "Check in with mom and catch up on the latest family news.",
+    "completed": true
+  },
+  {
+    "id": 4,
+    "title": "Go to the gym",
+    "description": "Do a cardio workout for 30 minutes and lift weights for an hour.",
+    "completed": false
+  },
+  {
+    "id": 5,
+    "title": "Read book",
+    "description": "Finish reading 'The Great Gatsby' by F. Scott Fitzgerald.",
+    "completed": true
+  }
+]
