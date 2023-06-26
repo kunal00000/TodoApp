@@ -60,18 +60,16 @@ export async function updateTodoByID(req: Request, res: Response) {
     todos[idx].status = req.body.status;
     todos[idx].updatedAt = new Date();
 
-    const safeTodo = TodoSchema.safeParse(todos[idx]);
+    const safeTodosArray = TodoSchema.array().parse(todos);
 
-    if (safeTodo.success) {
-      writeTodosToFile(todos)
-        .then(() => {
-          res.status(200).send(todos[idx]);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.sendStatus(500);
-        });
-    }
+    writeTodosToFile(safeTodosArray)
+      .then(() => {
+        res.status(200).send(safeTodosArray[idx]);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   }
 }
 
