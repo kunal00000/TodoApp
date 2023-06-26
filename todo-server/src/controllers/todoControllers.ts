@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
-import { TodoSchema, type Todo } from "@/models/todo";
-import { z } from "zod";
+import { TodoSchema, type Todo } from "../models/todo";
 import { readTodosFromFile, writeTodosToFile } from "../utils/fileSystem";
 
 let todos: Todo[];
@@ -60,16 +59,18 @@ export async function updateTodoByID(req: Request, res: Response) {
     todos[idx].status = req.body.status;
     todos[idx].updatedAt = new Date();
 
-    const safeTodosArray = TodoSchema.array().parse(todos);
+    const safeTodo = TodoSchema.safeParse(todos[idx]);
 
-    writeTodosToFile(safeTodosArray)
-      .then(() => {
-        res.status(200).send(safeTodosArray[idx]);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+    if (safeTodo.success) {
+      writeTodosToFile(todos)
+        .then(() => {
+          res.status(200).send(todos[idx]);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.sendStatus(500);
+        });
+    }
   }
 }
 
