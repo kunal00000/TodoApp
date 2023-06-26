@@ -13,8 +13,8 @@ app.use(bodyParser.json());
 app.use(cors({ origin: "http://127.0.0.1:5173" }));
 app.use("/todos", todoRoutes);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, world!");
+app.get("*", (req: Request, res: Response) => {
+  res.status(404).send("Not Found");
 });
 
 app.listen(port, () => {

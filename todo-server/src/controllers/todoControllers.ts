@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
-import type { Todo } from "@/models/todo";
+import { TodoSchema, type Todo } from "@/models/todo";
+import { z } from "zod";
 import { readTodosFromFile, writeTodosToFile } from "../utils/fileSystem";
 
 let todos: Todo[];
@@ -30,10 +31,12 @@ export async function postTodo(req: Request, res: Response) {
     id: todos[todos.length - 1].id + 1,
     title: req.body.title,
     description: req.body.description,
-    completed: req.body.completed,
-  } satisfies Todo;
+    status: req.body.status,
+    updatedAt: new Date() as Date,
+  };
 
-  todos.push(newTodo);
+  const safeNewTodo = TodoSchema.parse(newTodo);
+  todos.push(safeNewTodo);
 
   writeTodosToFile(todos)
     .then(() => {
@@ -53,17 +56,22 @@ export async function updateTodoByID(req: Request, res: Response) {
     res.status(404).send(`No todo found with id = ${id}!`);
   } else {
     todos[idx].title = req.body.title;
-    todos[idx].description = req.body.description;
-    todos[idx].completed = req.body.completed;
+    todos[idx].description = req.body.description ? req.body.description : "";
+    todos[idx].status = req.body.status;
+    todos[idx].updatedAt = new Date();
 
-    writeTodosToFile(todos)
-      .then(() => {
-        res.status(200).send(todos[idx]);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.sendStatus(500);
-      });
+    const safeTodo = TodoSchema.safeParse(todos[idx]);
+
+    if (safeTodo.success) {
+      writeTodosToFile(todos)
+        .then(() => {
+          res.status(200).send(todos[idx]);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.sendStatus(500);
+        });
+    }
   }
 }
 
